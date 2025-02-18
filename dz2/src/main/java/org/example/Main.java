@@ -1,8 +1,12 @@
 public class Main {
-
     public static void main(String[] args) {
         int numThreads = 5;
         int calculationTime = 10000;
+
+        String[] progressBars = new String[numThreads];
+        for (int i = 0; i < numThreads; i++) {
+            progressBars[i] = "Thread " + (i + 1) + " [                    ]";
+        }
 
         for (int i = 0; i < numThreads; i++) {
             final int threadId = i + 1;
@@ -18,8 +22,14 @@ public class Main {
 
                     progressBar.replace(1, 21, "=".repeat(j) + " ".repeat(20 - j));
                     synchronized (System.out) {
+                        progressBars[threadId - 1] = "Thread " + threadId + " " + progressBar.toString();
                         clearConsole();
-                        printProgressBar(threadId, progressBar.toString());
+                        printProgressBars(progressBars);
+                    }
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     }
                 }
                 long endTime = System.nanoTime();
@@ -37,10 +47,9 @@ public class Main {
         System.out.flush();
     }
 
-    private synchronized static void printProgressBar(int threadId, String progressBar) {
-        for (int i = 1; i <= 5; i++) {
-            System.out.print("Thread " + i + " " + progressBar + "\t");
+    private synchronized static void printProgressBars(String[] progressBars) {
+        for (String progressBar : progressBars) {
+            System.out.println(progressBar);
         }
-        System.out.println();
     }
 }
