@@ -60,8 +60,9 @@ class PetRepository {
 
     public Optional<Pet> findById(Long id) { return Optional.ofNullable(petStore.get(id)); }
     public void save(Pet pet) { petStore.put(pet.getId(), pet); }
-    public void delete(Long id) { petStore.remove(id); }
+    public void deleteById(Long id) { petStore.remove(id); }
     public Collection<Pet> findAll() { return petStore.values(); }
+    public void deleteAll() { petStore.clear(); }
 }
 
 @Service
@@ -72,7 +73,9 @@ class PetService {
     public Pet addPet(Pet pet) { repository.save(pet); return pet; }
     public Pet updatePet(Pet pet) { repository.save(pet); return pet; }
     public Optional<Pet> getPetById(Long id) { return repository.findById(id); }
-    public void deletePet(Long id) { repository.delete(id); }
+    public void deletePetById(Long id) { repository.deleteById(id); }
+    public List<Pet> getAllPets() { return (List<Pet>) repository.findAll(); }
+    public void deleteAllPets() { repository.deleteAll(); }
 }
 
 @RestController
@@ -93,5 +96,8 @@ class PetController {
     }
 
     @DeleteMapping("/{petId}")
-    public void deletePet(@PathVariable Long petId) { service.deletePet(petId); }
+    public void deletePet(@PathVariable Long petId) { service.deletePetById(petId); }
+
+    @GetMapping
+    public List<Pet> getAllPets() { return service.getAllPets(); }
 }
